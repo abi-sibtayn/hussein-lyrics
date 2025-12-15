@@ -76,7 +76,7 @@
     let allLyrics = [];
 
     async function loadIndex() {
-      const res = await fetch("templates.json");
+      const res = await fetch("templates.json?v=" + Date.now());
       const files = await res.json();
 
       for (const file of files) {
