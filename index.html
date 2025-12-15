@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hussein Lyrics</title>
+
+  <style>
+    body {
+      background-color: #f4f1ec;
+      color: #000000;
+      font-family: "Georgia", "Times New Roman", serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 48px;
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      font-size: 26px;
+      border-bottom: 1px solid;
+      padding-bottom: 5px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 60px;
+      opacity: 0.7;
+    }
+
+    /* SETTINGS PANEL */
+    .settings-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid;
+      padding: 6px 10px;
+      background: none;
+      font-family: inherit;
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 60px;
+      right: 15px;
+      border: 1px solid;
+      padding: 15px;
+      display: none;
+      background-color: inherit;
+    }
+
+    .settings-panel button {
+      display: block;
+      margin: 8px 0;
+      width: 100%;
+      font-family: inherit;
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    function toggleSettings() {
+      var panel = document.getElementById("settings");
+      panel.style.display = (panel.style.display === "block") ? "none" : "block";
+    }
+
+    function darkMode() {
+      document.body.style.backgroundColor = "#0e0e0e";
+      document.body.style.color = "#ffffff";
+    }
+
+    function lightMode() {
+      document.body.style.backgroundColor = "#f4f1ec";
+      document.body.style.color = "#000000";
+    }
+  </script>
+</head>
+
+<body>
+
+  <button class="settings-btn" onclick="toggleSettings()">⚙ Settings</button>
+
+  <div id="settings" class="settings-panel">
+    <button onclick="darkMode()">🖤 Dark Mode</button>
+    <button onclick="lightMode()">🤍 Light Mode</button>
+    <button onclick="toggleSettings()">Close</button>
+  </div>
+
+  <div class="container">
+
+    <h1>HUSSEIN LYRICS</h1>
+
+    <p align="center">
+      <i>
+        A growing archive of grief, love, loyalty, and poetry<br>
+        dedicated to Aba ʿAbdillah al-Husayn (ع)
+      </i>
+    </p>
+
+    <hr>
+
+    <h2>About This Site</h2>
+    <p>
+      <b>Hussein Lyrics</b> is a simple archive dedicated to preserving the
+      words recited in mourning and devotion — nauhas, latmiyas, qasidat,
+      manqabat, and all forms of poetry written for the Ahl al-Bayt (ع).
+    </p>
+
+    <p>
+      This site is intentionally minimal. No distractions. No algorithms.
+      Just words that were meant to be cried, whispered, shouted, and remembered.
+    </p>
+
+    <h2>What You’ll Find</h2>
+    <ul>
+      <li>Nauha lyrics (Arabic, Iraqi, Urdu, English, and more)</li>
+      <li>Latmiya and Shoor texts</li>
+      <li>Qasidat and Manqabat</li>
+      <li>Community-shared submissions</li>
+      <li>Preserved old recitations and rare poetry</li>
+    </ul>
+
+    <h2>Coming Soon</h2>
+    <ul>
+      <li>Search by reciter or language</li>
+      <li>Category pages</li>
+      <li>Custom logo</li>
+      <li>Dedicated pages for each poem</li>
+    </ul>
+
+    <div class="footer">
+      Ya Husayn (ع) — every word here is written with love and grief.
+    </div>
+
+  </div>
+
+</body>
+</html>
