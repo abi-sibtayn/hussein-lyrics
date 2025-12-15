@@ -8,7 +8,7 @@
     body {
       background-color: #f4f1ec;
       color: #000000;
-      font-family: "Georgia", "Times New Roman", serif;
+      font-family: Georgia, "Times New Roman", serif;
       margin: 0;
       padding: 0;
     }
@@ -26,42 +26,38 @@
     }
 
     h2 {
-      font-size: 26px;
       border-bottom: 1px solid;
       padding-bottom: 5px;
     }
 
-    p {
-      font-size: 18px;
+    .entry {
+      margin-bottom: 40px;
+    }
+
+    .type {
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 16px;
       line-height: 1.6;
     }
 
-    ul {
-      font-size: 18px;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 60px;
-      opacity: 0.7;
-    }
-
-    /* SETTINGS BUTTON */
     .settings-btn {
       position: fixed;
       top: 15px;
       right: 15px;
-      font-size: 14px;
-      cursor: pointer;
       border: 1px solid;
-      padding: 6px 10px;
       background: none;
+      padding: 6px 10px;
+      cursor: pointer;
       font-family: inherit;
       color: inherit;
     }
 
-    /* SETTINGS PANEL */
     .settings-panel {
       position: fixed;
       top: 60px;
@@ -75,17 +71,34 @@
 
     .settings-panel button {
       display: block;
-      margin: 8px 0;
       width: 100%;
+      margin: 6px 0;
       font-family: inherit;
       cursor: pointer;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
     }
   </style>
 
   <script>
+    /* ============================
+       LIST YOUR .template FILES HERE
+       Add ONE new line per template
+       ============================ */
+    const templateFiles = [
+      "amma-fizza.template",
+      "example.template"
+      // add more here
+    ];
+
     function toggleSettings() {
-      var panel = document.getElementById("settings");
-      panel.style.display = (panel.style.display === "block") ? "none" : "block";
+      const panel = document.getElementById("settings");
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
     }
 
     function darkMode() {
@@ -97,6 +110,53 @@
       document.body.style.backgroundColor = "#f4f1ec";
       document.body.style.color = "#000000";
     }
+
+    async function loadTemplates() {
+      const container = document.getElementById("entries");
+
+      for (const file of templateFiles) {
+        try {
+          const res = await fetch(file);
+          const text = await res.text();
+          const entry = parseTemplate(text);
+          container.appendChild(renderEntry(entry));
+        } catch (err) {
+          console.error("Failed to load:", file);
+        }
+      }
+    }
+
+    function parseTemplate(text) {
+      const lines = text.split("\n");
+      const data = { lyrics: "" };
+      let inLyrics = false;
+
+      for (const line of lines) {
+        if (line.startsWith("vid-url:")) data.vid = line.replace("vid-url:", "").trim();
+        else if (line.startsWith("name:")) data.name = line.replace("name:", "").trim();
+        else if (line.startsWith("type:")) data.type = line.replace("type:", "").trim();
+        else if (line.startsWith("lyrics:")) inLyrics = true;
+        else if (inLyrics) data.lyrics += line + "\n";
+      }
+
+      return data;
+    }
+
+    function renderEntry(data) {
+      const div = document.createElement("div");
+      div.className = "entry";
+
+      div.innerHTML = `
+        <h2>${data.name}</h2>
+        <div class="type">${data.type}</div>
+        ${data.vid ? `<p><a href="${data.vid}" target="_blank">Watch Recitation</a></p>` : ""}
+        <pre>${data.lyrics.trim()}</pre>
+      `;
+
+      return div;
+    }
+
+    window.onload = loadTemplates;
   </script>
 </head>
 
@@ -111,43 +171,25 @@
   </div>
 
   <div class="container">
-
     <h1>HUSSEIN LYRICS</h1>
 
     <p align="center">
       <i>
-        A growing archive of grief, love, loyalty, and poetry<br>
-        dedicated to Aba ʿAbdillah al-Husayn (ع)
+        A quiet archive of nauha, latmiya, qasidah, manqabat, and merciya lyrics<br>
+        written in remembrance of Aba ʿAbdillah al-Husayn (ع)
       </i>
     </p>
 
     <hr>
 
-    <h2>About This Site</h2>
-    <p>
-      <b>Hussein Lyrics</b> is a simple archive dedicated to preserving the words
-      recited in mourning and devotion — nauhas, latmiyas, qasidat, and manqabat —
-      written for the Ahl al-Bayt (ع).
-    </p>
-
-    <p>
-      This site is intentionally minimal. No distractions. No algorithms.
-      Just words that were meant to be cried, whispered, shouted, and remembered.
-    </p>
-
-    <h2>What You’ll Find</h2>
-    <ul>
-      <li>Nauha lyrics</li>
-      <li>Latmiya lyrics</li>
-      <li>Qasidat lyrics</li>
-      <li>Manqabat lyrics</li>
-    </ul>
-
-    <div class="footer">
-      Ya Husayn (ع) — every word here is written with love and grief.<br>
-      Made by the <b>Abi Sibtayn Community</b>
+    <div id="entries">
+      <!-- lyrics auto-load here -->
     </div>
 
+    <div class="footer">
+      Ya Husayn (ع)<br>
+      Made by the <b>Abi Sibtayn Community</b>
+    </div>
   </div>
 
 </body>
