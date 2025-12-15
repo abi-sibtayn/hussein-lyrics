@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hussein Lyrics</title>
+
+  <style>
+    body {
+      background-color: #f4f1ec;
+      color: #000000;
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 42px;
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      border-bottom: 1px solid;
+      padding-bottom: 5px;
+    }
+
+    .type {
+      font-style: italic;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    .back {
+      margin-bottom: 30px;
+      display: inline-block;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
+    }
+  </style>
+
+  <script>
+    function getTemplateFile() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("file");
+    }
+
+    async function loadLyrics() {
+      const file = getTemplateFile();
+      if (!file) return;
+
+      try {
+        const res = await fetch(file);
+        const text = await res.text();
+        const data = parseTemplate(text);
+
+        document.getElementById("title").textContent = data.name;
+        document.getElementById("type").textContent = data.type || "";
+        document.getElementById("lyrics").textContent = data.lyrics.trim();
+
+        if (data.vid) {
+          const link = document.getElementById("video");
+          link.href = data.vid;
+          link.style.display = "inline";
+        }
+      } catch (e) {
+        console.error("Failed to load lyrics:", file);
+      }
+    }
+
+    function parseTemplate(text) {
+      const lines = text.split("\n");
+      const data = { lyrics: "" };
+      let inLyrics = false;
+
+      for (const line of lines) {
+        if (line.startsWith("vid-url:")) data.vid = line.replace("vid-url:", "").trim();
+        else if (line.startsWith("name:")) data.name = line.replace("name:", "").trim();
+        else if (line.startsWith("type:")) data.type = line.replace("type:", "").trim();
+        else if (line.startsWith("lyrics:")) inLyrics = true;
+        else if (inLyrics) data.lyrics += line + "\n";
+      }
+
+      return data;
+    }
+
+    window.onload = loadLyrics;
+  </script>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <a href="index.html" class="back">← Back to Home</a>
+
+    <h1 id="title"></h1>
+    <div id="type" class="type"></div>
+
+    <p>
+      <a id="video" href="#" target="_blank" style="display:none;">
+        Watch Recitation
+      </a>
+    </p>
+
+    <pre id="lyrics"></pre>
+
+    <div class="footer">
+      Ya Husayn (ع)<br>
+      Made by the <b>Abi Sibtayn Community</b>
+    </div>
+
+  </div>
+
+</body>
+</html>
