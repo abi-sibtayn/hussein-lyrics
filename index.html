@@ -30,20 +30,24 @@
       padding-bottom: 5px;
     }
 
-    .entry {
-      margin-bottom: 40px;
-    }
-
-    .type {
-      font-style: italic;
-      opacity: 0.8;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      font-family: inherit;
-      font-size: 16px;
+    p {
+      font-size: 18px;
       line-height: 1.6;
+    }
+
+    ul {
+      font-size: 18px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    .lyrics-link {
+      display: block;
+      margin: 8px 0;
+      font-size: 18px;
     }
 
     .settings-btn {
@@ -87,12 +91,12 @@
 
   <script>
     /* ============================
-       LIST YOUR .template FILES HERE
-       Add ONE new line per template
+       ADD YOUR .template FILES HERE
+       One line per lyrics file
        ============================ */
     const templateFiles = [
       "abb-tu-ghazi.template"
-      // add a coma after the last " before u add more here
+      // add more files with commas
     ];
 
     function toggleSettings() {
@@ -110,16 +114,22 @@
       document.body.style.color = "#000000";
     }
 
-    async function loadTemplates() {
-      const container = document.getElementById("entries");
+    async function loadIndex() {
+      const list = document.getElementById("lyrics-list");
 
       for (const file of templateFiles) {
         try {
           const res = await fetch(file);
           const text = await res.text();
-          const entry = parseTemplate(text);
-          container.appendChild(renderEntry(entry));
-        } catch (err) {
+          const data = parseTemplate(text);
+
+          const link = document.createElement("a");
+          link.className = "lyrics-link";
+          link.href = `lyrics.html?file=${file}`;
+          link.textContent = data.name || file;
+
+          list.appendChild(link);
+        } catch (e) {
           console.error("Failed to load:", file);
         }
       }
@@ -127,35 +137,17 @@
 
     function parseTemplate(text) {
       const lines = text.split("\n");
-      const data = { lyrics: "" };
-      let inLyrics = false;
-
+      const data = {};
       for (const line of lines) {
-        if (line.startsWith("vid-url:")) data.vid = line.replace("vid-url:", "").trim();
-        else if (line.startsWith("name:")) data.name = line.replace("name:", "").trim();
-        else if (line.startsWith("type:")) data.type = line.replace("type:", "").trim();
-        else if (line.startsWith("lyrics:")) inLyrics = true;
-        else if (inLyrics) data.lyrics += line + "\n";
+        if (line.startsWith("name:")) {
+          data.name = line.replace("name:", "").trim();
+          break;
+        }
       }
-
       return data;
     }
 
-    function renderEntry(data) {
-      const div = document.createElement("div");
-      div.className = "entry";
-
-      div.innerHTML = `
-        <h2>${data.name}</h2>
-        <div class="type">${data.type}</div>
-        ${data.vid ? `<p><a href="${data.vid}" target="_blank">Watch Recitation</a></p>` : ""}
-        <pre>${data.lyrics.trim()}</pre>
-      `;
-
-      return div;
-    }
-
-    window.onload = loadTemplates;
+    window.onload = loadIndex;
   </script>
 </head>
 
@@ -170,6 +162,7 @@
   </div>
 
   <div class="container">
+
     <h1>HUSSEIN LYRICS</h1>
 
     <p align="center">
@@ -181,14 +174,39 @@
 
     <hr>
 
-    <div id="entries">
-      <!-- lyrics auto-load here -->
+    <h2>About This Site</h2>
+    <p>
+      <b>Hussein Lyrics</b> is a simple archive dedicated to preserving the words
+      recited in mourning and devotion for the Ahl al-Bayt (ع).
+    </p>
+
+    <p>
+      This site is intentionally minimal. No distractions. No algorithms.
+      Just words meant to be cried, whispered, and remembered.
+    </p>
+
+    <h2>What You’ll Find</h2>
+    <ul>
+      <li>Nauha lyrics</li>
+      <li>Latmiya lyrics</li>
+      <li>Qasidah lyrics</li>
+      <li>Manqabat lyrics</li>
+      <li>Merciya lyrics</li>
+    </ul>
+
+    <hr>
+
+    <h2>Lyrics Index</h2>
+
+    <div id="lyrics-list">
+      <!-- links auto-generated here -->
     </div>
 
     <div class="footer">
       Ya Husayn (ع)<br>
       Made by the <b>Abi Sibtayn Community</b>
     </div>
+
   </div>
 
 </body>
