@@ -42,6 +42,18 @@
       margin: 6px 0;
     }
 
+    /* 🔍 SEARCH + FILTER */
+    .controls {
+      margin: 20px 0;
+    }
+
+    input, select {
+      font-family: inherit;
+      padding: 8px;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
     .footer {
       margin-top: 60px;
       font-size: 14px;
@@ -51,31 +63,49 @@
   </style>
 
   <script>
-    async function loadIndex() {
-      const list = document.getElementById("lyrics-list");
+    let allLyrics = [];
 
+    async function loadIndex() {
       const res = await fetch("templates.json");
       const files = await res.json();
 
       for (const file of files) {
         const text = await fetch(file).then(r => r.text());
-        const name = extractName(text);
-
-        const link = document.createElement("a");
-        link.href = `lyrics.html?file=${file}`;
-        link.textContent = name || file;
-
-        list.appendChild(link);
+        const data = parseTemplate(text);
+        data.file = file;
+        allLyrics.push(data);
       }
+
+      renderList();
     }
 
-    function extractName(text) {
+    function parseTemplate(text) {
+      const data = {};
       for (const line of text.split("\n")) {
-        if (line.startsWith("name:")) {
-          return line.replace("name:", "").trim();
-        }
+        if (line.startsWith("name:")) data.name = line.replace("name:", "").trim();
+        if (line.startsWith("type:")) data.type = line.replace("type:", "").trim().toLowerCase();
       }
-      return null;
+      return data;
+    }
+
+    function renderList() {
+      const list = document.getElementById("lyrics-list");
+      const query = document.getElementById("search").value.toLowerCase();
+      const filter = document.getElementById("filter").value;
+
+      list.innerHTML = "";
+
+      allLyrics
+        .filter(item =>
+          item.name.toLowerCase().includes(query) &&
+          (filter === "all" || item.type === filter)
+        )
+        .forEach(item => {
+          const link = document.createElement("a");
+          link.href = `lyrics.html?file=${item.file}`;
+          link.textContent = item.name;
+          list.appendChild(link);
+        });
     }
 
     window.onload = loadIndex;
@@ -115,6 +145,25 @@
     <hr>
 
     <h2>Lyrics Index</h2>
+
+    <div class="controls">
+      <input
+        type="text"
+        id="search"
+        placeholder="Search lyrics…"
+        oninput="renderList()"
+      >
+
+      <select id="filter" onchange="renderList()">
+        <option value="all">All types</option>
+        <option value="nauha">Nauha</option>
+        <option value="latmiya">Latmiya</option>
+        <option value="qasidah">Qasidah</option>
+        <option value="manqabat">Manqabat</option>
+        <option value="merciya">Merciya</option>
+      </select>
+    </div>
+
     <div id="lyrics-list"></div>
 
     <div class="footer">
