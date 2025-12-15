@@ -7,7 +7,7 @@
   <style>
     body {
       background-color: #f4f1ec;
-      color: #000000;
+      color: #000;
       font-family: Georgia, "Times New Roman", serif;
       margin: 0;
       padding: 0;
@@ -20,14 +20,7 @@
     }
 
     h1 {
-      text-align: center;
       font-size: 42px;
-      letter-spacing: 2px;
-    }
-
-    h2 {
-      border-bottom: 1px solid;
-      padding-bottom: 5px;
     }
 
     .type {
@@ -48,11 +41,6 @@
       text-decoration: underline;
     }
 
-    .back {
-      margin-bottom: 30px;
-      display: inline-block;
-    }
-
     .footer {
       margin-top: 60px;
       font-size: 14px;
@@ -62,40 +50,33 @@
   </style>
 
   <script>
-    function getTemplateFile() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("file");
+    function getFile() {
+      return new URLSearchParams(window.location.search).get("file");
     }
 
     async function loadLyrics() {
-      const file = getTemplateFile();
+      const file = getFile();
       if (!file) return;
 
-      try {
-        const res = await fetch(file);
-        const text = await res.text();
-        const data = parseTemplate(text);
+      const text = await fetch(file).then(r => r.text());
+      const data = parseTemplate(text);
 
-        document.getElementById("title").textContent = data.name;
-        document.getElementById("type").textContent = data.type || "";
-        document.getElementById("lyrics").textContent = data.lyrics.trim();
+      document.getElementById("title").textContent = data.name;
+      document.getElementById("type").textContent = data.type || "";
+      document.getElementById("lyrics").textContent = data.lyrics.trim();
 
-        if (data.vid) {
-          const link = document.getElementById("video");
-          link.href = data.vid;
-          link.style.display = "inline";
-        }
-      } catch (e) {
-        console.error("Failed to load lyrics:", file);
+      if (data.vid) {
+        const v = document.getElementById("video");
+        v.href = data.vid;
+        v.style.display = "inline";
       }
     }
 
     function parseTemplate(text) {
-      const lines = text.split("\n");
       const data = { lyrics: "" };
       let inLyrics = false;
 
-      for (const line of lines) {
+      for (const line of text.split("\n")) {
         if (line.startsWith("vid-url:")) data.vid = line.replace("vid-url:", "").trim();
         else if (line.startsWith("name:")) data.name = line.replace("name:", "").trim();
         else if (line.startsWith("type:")) data.type = line.replace("type:", "").trim();
@@ -114,7 +95,7 @@
 
   <div class="container">
 
-    <a href="index.html" class="back">← Back to Home</a>
+    <a href="index.html">← Back to Home</a>
 
     <h1 id="title"></h1>
     <div id="type" class="type"></div>
